@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block conteudo %}
+  <h1>Visão geral</h1>
+
+  {# Variáveis {{ }} vindas da rota index() via render_template #}
+  <div class="cartoes">
+    <div class="cartao">
+      <div class="numero">{{ total_usuarios }}</div>
+      Usuários cadastrados
+    </div>
+    <div class="cartao">
+      <div class="numero">{{ total_arenas }}</div>
+      Arenas parceiras
+    </div>
+    <div class="cartao">
+      <div class="numero">{{ total_reservas }}</div>
+      Reservas realizadas
+    </div>
+  </div>
+
+  {# Instrução condicional {% if %} #}
+  {% if total_usuarios == 0 %}
+    <p class="vazio">Comece cadastrando usuários na aba "Usuários".</p>
+  {% endif %}
+{% endblock %}

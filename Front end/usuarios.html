@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block conteudo %}
+  <h1>Usuários</h1>
+
+  {# Filtro usando request.args (querystring ?tipo=) #}
+  <div class="filtros">
+    <a href="{{ url_for('pagina_usuarios') }}" class="{{ 'ativo' if not tipo_filtro }}">Todos</a>
+    {% for tipo in ['atleta', 'dono', 'professor'] %}
+      <a href="{{ url_for('pagina_usuarios', tipo=tipo) }}"
+         class="{{ 'ativo' if tipo_filtro == tipo }}">{{ tipo | capitalize }}</a>
+    {% endfor %}
+  </div>
+
+  {# Instrução de repetição {% for %} percorrendo o fetchall() #}
+  {% if usuarios %}
+    <table>
+      <tr><th>ID</th><th>Nome</th><th>E-mail</th><th>Telefone</th><th>Tipo</th><th></th></tr>
+      {% for u in usuarios %}
+        <tr>
+          <td>{{ u['usuario_id'] }}</td>
+          <td>{{ u['nome'] }}</td>
+          <td>{{ u['email'] }}</td>
+          <td>{{ u['telefone'] }}</td>
+          <td>{{ u['tipo_usuario'] | capitalize }}</td>
+          <td>
+            <form method="POST" action="{{ url_for('excluir_usuario_web', usuario_id=u['usuario_id']) }}"
+                  onsubmit="return confirm('Excluir este usuário?')">
+              <button class="perigo" type="submit">Excluir</button>
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
+  {% else %}
+    <p class="vazio">Nenhum usuário encontrado.</p>
+  {% endif %}
+
+  {# Formulário enviado via POST e lido com request.form #}
+  <form class="painel" method="POST" action="{{ url_for('pagina_usuarios') }}">
+    <h2>Cadastrar usuário</h2>
+    <input name="nome" placeholder="Nome completo" required>
+    <input name="email" type="email" placeholder="E-mail" required>
+    <input name="senha" type="password" placeholder="Senha" required>
+    <input name="telefone" placeholder="Telefone" required>
+    <select name="tipo_usuario" required>
+      <option value="">Tipo de usuário…</option>
+      <option value="atleta">Atleta</option>
+      <option value="dono">Dono de arena</option>
+      <option value="professor">Professor</option>
+    </select>
+    <button type="submit">Cadastrar</button>
+  </form>
+{% endblock %}

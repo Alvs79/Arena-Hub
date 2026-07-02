@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block conteudo %}
+  <h1>Arenas</h1>
+
+  {% if arenas %}
+    <table>
+      <tr><th>ID</th><th>Nome</th><th>Cidade</th><th>Dono</th><th>Taxa SaaS</th><th></th></tr>
+      {% for a in arenas %}
+        <tr>
+          <td>{{ a['arena_id'] }}</td>
+          <td>{{ a['nome'] }}</td>
+          <td>{{ a['cidade'] }}</td>
+          {# nome_dono vem do JOIN feito na rota #}
+          <td>{{ a['nome_dono'] }}</td>
+          <td>R$ {{ '%.2f' | format(a['taxa_saas']) }}</td>
+          <td>
+            <form method="POST" action="{{ url_for('excluir_arena_web', arena_id=a['arena_id']) }}"
+                  onsubmit="return confirm('Excluir esta arena?')">
+              <button class="perigo" type="submit">Excluir</button>
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
+  {% else %}
+    <p class="vazio">Nenhuma arena cadastrada ainda.</p>
+  {% endif %}
+
+  {# Se não existe nenhum usuário do tipo 'dono', bloqueia o formulário
+     e orienta o usuário — toda arena precisa de um dono válido #}
+  {% if not donos %}
+    <div style="margin-top: 24px; padding: 20px; background: #FEF3C7; border: 1px solid #F59E0B;
+                border-radius: 12px; color: #92400E;">
+      <strong>⚠️ Não é possível cadastrar arenas ainda.</strong>
+      <p style="margin-top: 6px; font-size: 14px;">
+        Toda arena precisa de um responsável do tipo <strong>"Dono de arena"</strong>,
+        e nenhum foi cadastrado até agora.
+      </p>
+      <a href="{{ url_for('pagina_usuarios') }}"
+         style="display: inline-block; margin-top: 12px; background: #F59E0B; color: #fff;
+                padding: 10px 18px; border-radius: 8px; text-decoration: none; font-weight: 600;">
+        Cadastrar um dono agora →
+      </a>
+    </div>
+  {% else %}
+    <form class="painel" method="POST" action="{{ url_for('pagina_arenas') }}">
+      <h2>Cadastrar arena</h2>
+      <input name="nome" placeholder="Nome da arena" required>
+      <input name="cnpj" placeholder="CNPJ (opcional)">
+      <input name="endereco" placeholder="Endereço" required>
+      <input name="cidade" placeholder="Cidade" required>
+      <select name="dono_id" required>
+        <option value="">Dono da arena…</option>
+        {% for d in donos %}
+          <option value="{{ d['usuario_id'] }}">{{ d['nome'] }}</option>
+        {% endfor %}
+      </select>
+      <input name="taxa_saas" type="number" step="0.01" min="0" placeholder="Taxa SaaS (R$/mês)" required>
+      <button type="submit">Cadastrar</button>
+    </form>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,13 @@
+# Banco de dados local (não deve ir para o git)
+*.db
+*.sqlite3
+
+# Arquivos temporários do Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+.venv/
+venv/
+ENV/
